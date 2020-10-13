@@ -29,13 +29,13 @@ jobs:
     - bash: 'sfdx force:org:create -f config/project-scratch-def.json -a TestScratchOrg-$(Build.SourceVersion) -d 30 -v ${{parameters.username}}'
       displayName: 'Create a Scratch Org'
 
-    # - task: AzlamSalam.sfpowerscripts.sfpwowerscript-triggerapextest-task.sfpwowerscript-triggerapextest-task@9
-    #   displayName: 'Trigger Apex Tests in TestScratchOrg'
-    #   inputs:
-    #     target_org: TestScratchOrg-$(Build.SourceVersion)
+    - bash: 'sfdx force:source:push -u TestScratchOrg-$(Build.SourceVersion)'
+      displayName: 'Push source to ScratchOrg'
 
-    - bash: 'sfdx force:apex:test:run -l RunLocalTests -u TestScratchOrg-$(Build.SourceVersion) -w 30 --resultformat human --codecoverage'
-      displayName: 'Create a Scratch Org'
+    - task: AzlamSalam.sfpowerscripts.sfpwowerscript-triggerapextest-task.sfpwowerscript-triggerapextest-task@9
+      displayName: 'Trigger Apex Tests in TestScratchOrg'
+      inputs:
+        target_org: TestScratchOrg-$(Build.SourceVersion)
 
     - task: AzlamSalam.sfpowerscripts.sfpwowerscript-validateapextestcoverage-task.sfpwowerscript-validateapextestcoverage-task@4
       displayName: 'Validate  Apex Tests  Coverage for  90 % in TestScratchOrg'
