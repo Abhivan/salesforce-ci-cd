@@ -1,0 +1,45 @@
+parameters:
+  username: cicd@xploremachinez.com
+  poolname: sfpool
+
+jobs:
+- job: test
+  displayName: 'test'
+  variables:
+  - group: sftest
+  pool:
+    name: ${{parameters.poolname}}
+  workspace:
+    clean: all
+  steps:
+
+    - task: AzlamSalam.sfpowerscripts.sfpwowerscript-installsfdx-task.sfpwowerscript-installsfdx-task@7
+      displayName: 'Install SFDX'
+
+    - task: AzlamSalam.sfpowerscripts.sfpwowerscript-authenticateorg-task.sfpwowerscript-authenticateorg-task@9
+      displayName: 'Authenticate  devhub using JWT'
+      inputs:
+        method: JWT
+        jwt_key_file: server.key
+        username: ${{parameters.username}}
+        alias: devhub
+        isdevhub: true
+        clientid: $(jwt-client-id)
+
+    - task: AzlamSalam.sfpowerscripts.sfpwowerscript-managescratchorg-task.sfpwowerscript-managescratchorg-task@8
+      displayName: 'Create a Scratch Org'
+      inputs:
+        alias: TestScratchOrg
+        devhub_alias: devhub
+
+    - task: AzlamSalam.sfpowerscripts.sfpwowerscript-triggerapextest-task.sfpwowerscript-triggerapextest-task@9
+      displayName: 'Trigger Apex Tests in TestScratchOrg'
+      inputs:
+        target_org: TestScratchOrg
+
+    - task: AzlamSalam.sfpowerscripts.sfpwowerscript-validateapextestcoverage-task.sfpwowerscript-validateapextestcoverage-task@4
+      displayName: 'Validate  Apex Tests  Coverage for  90 % in TestScratchOrg'
+      inputs:
+        target_org: TestScratchOrg
+        test_coverage: 90
+
