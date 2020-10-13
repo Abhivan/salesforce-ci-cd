@@ -1,0 +1,14 @@
+trigger:
+  - master
+  - test/*
+  - refs/tags/{tagname}
+pr:
+  - master
+  - test/*
+
+stages:
+
+  - stage: test
+    displayName: 'test stage'
+    jobs:
+    - template: azure-pipelines-test-template.yml
