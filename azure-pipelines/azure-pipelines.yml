@@ -2,10 +2,9 @@ trigger:
   - master
   - test/*
   - refs/tags/{tagname}
-  pr:
+pr:
   - master
   - test/*
-
 
 stages:
 
