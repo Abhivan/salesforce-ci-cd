@@ -5,7 +5,7 @@
       "default": true
     }
   ],
-  "namespace": "",
+  "namespace": "cicdproject",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "49.0"
 }
