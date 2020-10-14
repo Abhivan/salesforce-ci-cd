@@ -1,0 +1,21 @@
+trigger:
+  - master
+  - test/*
+  - refs/tags/{tagname}
+pr:
+  - master
+  - test/*
+
+stages:
+
+  - stage: Test
+    displayName: 'Run Tests'
+    jobs:
+    - template: azure-pipelines/azure-pipelines-test-template.yml
+
+  - stage: Increment_version
+    displayName: 'Increment Version'
+    dependsOn: Test
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    jobs:
+    - template: azure-pipelines/azure-pipelines-increment-version-template.yml

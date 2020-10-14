@@ -1,12 +1,16 @@
 parameters:
   username: cicd@xploremachinez.com
   poolname: sfpool
+  devhub_alias: devhub
 
 jobs:
 - job: test
   displayName: 'test'
   variables:
   - group: sftest
+  - name: Scratch_Org_Name
+    # value: TestScratchOrg-$(Build.SourceVersion)
+    value: TestScratchOrgCI01
   pool:
     name: ${{parameters.poolname}}
   workspace:
@@ -22,24 +26,33 @@ jobs:
         method: JWT
         jwt_key_file: server.key
         username: ${{parameters.username}}
-        alias: devhub
+        alias: ${{parameters.devhub_alias}}
         isdevhub: true
         clientid: $(jwt-client-id)
 
-    - task: AzlamSalam.sfpowerscripts.sfpwowerscript-managescratchorg-task.sfpwowerscript-managescratchorg-task@8
+    - bash: |
+        if sfdx force:org:list | grep -w $(Scratch_Org_Name); then
+          echo "There is existing test org"
+        else
+          sfdx force:org:create -f config/project-scratch-def.json -a $(Scratch_Org_Name) -d 30 -v ${{parameters.username}}
+        fi
       displayName: 'Create a Scratch Org'
-      inputs:
-        alias: TestScratchOrg
-        devhub_alias: devhub
+
+    - bash: 'sfdx force:source:push -u $(Scratch_Org_Name) -f'
+      displayName: 'Push source to ScratchOrg'
 
     - task: AzlamSalam.sfpowerscripts.sfpwowerscript-triggerapextest-task.sfpwowerscript-triggerapextest-task@9
       displayName: 'Trigger Apex Tests in TestScratchOrg'
       inputs:
-        target_org: TestScratchOrg
+        target_org: $(Scratch_Org_Name)
 
     - task: AzlamSalam.sfpowerscripts.sfpwowerscript-validateapextestcoverage-task.sfpwowerscript-validateapextestcoverage-task@4
       displayName: 'Validate  Apex Tests  Coverage for  90 % in TestScratchOrg'
       inputs:
-        target_org: TestScratchOrg
+        target_org: $(Scratch_Org_Name)
         test_coverage: 90
+
+    # - bash: 'sfdx force:org:delete -p -u $(Scratch_Org_Name) --noprompt'
+    #   displayName: 'Delete Scratch Org'
+    #   condition: always()
 
