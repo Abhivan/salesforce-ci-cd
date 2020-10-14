@@ -1,0 +1,40 @@
+parameters:
+  username: cicd@xploremachinez.com
+  poolname: sfpool
+
+jobs:
+- job: Increament_build_version
+  displayName: 'Increament Build Version'
+  variables:
+  - group: sftest
+  pool:
+    name: ${{parameters.poolname}}
+  workspace:
+    clean: all
+  steps:
+
+    - task: AzlamSalam.sfpowerscripts.sfpwowerscript-installsfdx-task.sfpwowerscript-installsfdx-task@7
+      displayName: 'Install SFDX'
+
+    - task: AzlamSalam.sfpowerscripts.sfpwowerscript-authenticateorg-task.sfpwowerscript-authenticateorg-task@9
+      displayName: 'Authenticate  devhub using JWT'
+      inputs:
+        method: JWT
+        jwt_key_file: server.key
+        username: ${{parameters.username}}
+        alias: devhub
+        isdevhub: true
+        clientid: $(jwt-client-id)
+      
+    - task: AzlamSalam.sfpowerscripts.sfpwowerscript-incrementversionnumber-task.sfpwowerscript-incrementversionnumber-task@9
+      displayName: 'Increments the BuildNumber version number'
+      inputs:
+        appendBuildNumber: true
+        package: employee
+
+    - task: AzlamSalam.sfpowerscripts.sfpwowerscripts-createsourcepackage-task.sfpwowerscripts-createsourcepackage-task@12
+      displayName: 'Creates a new version of Source Based Package for employee'
+      inputs:
+        package: employee
+        isDiffCheck: true
+        isGitTag: true

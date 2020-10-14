@@ -7,6 +7,8 @@ jobs:
   displayName: 'test'
   variables:
   - group: sftest
+  - name: Scratch_Org_Name
+    value: TestScratchOrg-$(Build.SourceVersion)
   pool:
     name: ${{parameters.poolname}}
   workspace:
@@ -26,24 +28,24 @@ jobs:
         isdevhub: true
         clientid: $(jwt-client-id)
 
-    - bash: 'sfdx force:org:create -f config/project-scratch-def.json -a TestScratchOrg-$(Build.SourceVersion) -d 30 -v ${{parameters.username}}'
+    - bash: 'sfdx force:org:create -f config/project-scratch-def.json -a $(Scratch_Org_Name) -d 30 -v ${{parameters.username}}'
       displayName: 'Create a Scratch Org'
 
-    - bash: 'sfdx force:source:push -u TestScratchOrg-$(Build.SourceVersion)'
+    - bash: 'sfdx force:source:push -u $(Scratch_Org_Name)'
       displayName: 'Push source to ScratchOrg'
 
     - task: AzlamSalam.sfpowerscripts.sfpwowerscript-triggerapextest-task.sfpwowerscript-triggerapextest-task@9
       displayName: 'Trigger Apex Tests in TestScratchOrg'
       inputs:
-        target_org: TestScratchOrg-$(Build.SourceVersion)
+        target_org: $(Scratch_Org_Name)
 
     - task: AzlamSalam.sfpowerscripts.sfpwowerscript-validateapextestcoverage-task.sfpwowerscript-validateapextestcoverage-task@4
       displayName: 'Validate  Apex Tests  Coverage for  90 % in TestScratchOrg'
       inputs:
-        target_org: TestScratchOrg-$(Build.SourceVersion)
+        target_org: $(Scratch_Org_Name)
         test_coverage: 90
 
-    - bash: 'sfdx force:org:delete -p -u TestScratchOrg-$(Build.SourceVersion) --noprompt'
+    - bash: 'sfdx force:org:delete -p -u $(Scratch_Org_Name) --noprompt'
       displayName: 'Delete Scratch Org'
       condition: always()
 
