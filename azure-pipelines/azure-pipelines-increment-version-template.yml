@@ -31,16 +31,18 @@ jobs:
       displayName: 'Increments the BuildNumber version number '
       inputs:
         package: employee
+        project_directory: '$(Pipeline.Workspace)'
         commit_changes: true
         pushchanges: true
         github_connection: 'abhivan-github'
 
     - task: AzlamSalam.sfpowerscripts.sfpwowerscripts-createsourcepackage-task.sfpwowerscripts-createsourcepackage-task@12
-      displayName: 'Creates a new version of Source Based Package for employee'
+      displayName: 'Creates a new version of Source Based Package for  employee'
       inputs:
         package: employee
         isDiffCheck: true
         isGitTag: true
+        project_directory: '$(Pipeline.Workspace)'
 
     - task: AzlamSalam.sfpowerscripts.sfpowerscripts-postcreatepackage-task.sfpowerscripts-postcreatepackage-task@1
       displayName: 'Post Execution for Create Package Tasks'
