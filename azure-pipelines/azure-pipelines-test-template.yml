@@ -1,7 +1,7 @@
 parameters:
-  username: cicdns@xploremachinez.com
+  username: cicd@xploremachinez.com
   poolname: sfpool
-  devhub_alias: devhubns
+  devhub_alias: devhub
 
 jobs:
 - job: test
@@ -28,7 +28,7 @@ jobs:
         username: ${{parameters.username}}
         alias: ${{parameters.devhub_alias}}
         isdevhub: true
-        clientid: $(jwt-client-id-ns)
+        clientid: $(jwt-client-id)
 
     - bash: |
         if sfdx force:org:list | grep -w devhub $(Scratch_Org_Name); then

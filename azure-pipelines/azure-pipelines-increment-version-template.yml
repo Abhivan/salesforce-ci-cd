@@ -1,7 +1,7 @@
 parameters:
-  username: cicdns@xploremachinez.com
+  username: cicd@xploremachinez.com
   poolname: sfpool
-  devhub_alias: devhubns
+  devhub_alias: devhub
 
 jobs:
 - job: Increament_build_version
@@ -25,7 +25,7 @@ jobs:
         username: ${{parameters.username}}
         alias: ${{parameters.devhub_alias}}
         isdevhub: true
-        clientid: $(jwt-client-id-ns)
+        clientid: $(jwt-client-id)
       
     - task: AzlamSalam.sfpowerscripts.sfpwowerscript-incrementversionnumber-task.sfpwowerscript-incrementversionnumber-task@9
       displayName: 'Increments the BuildNumber version number'
