@@ -1,11 +1,17 @@
 {
-  "packageDirectories": [
-    {
-      "path": "employee",
-      "default": true
+    "packageDirectories": [
+        {
+            "path": "employee",
+            "default": true,
+            "package": "employee",
+            "versionName": "ver 0.1",
+            "versionNumber": "0.1.0.NEXT"
+        }
+    ],
+    "namespace": "cicdproject",
+    "sfdcLoginUrl": "https://login.salesforce.com",
+    "sourceApiVersion": "49.0",
+    "packageAliases": {
+        "employee": "0Ho4K000000PBAGSA4"
     }
-  ],
-  "namespace": "cicdproject",
-  "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "49.0"
 }
