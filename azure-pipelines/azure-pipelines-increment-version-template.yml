@@ -31,7 +31,7 @@ jobs:
       displayName: 'Increments the BuildNumber version number '
       inputs:
         package: employee
-        project_directory: '$(Pipeline.Workspace)'
+        project_directory: '$(Pipeline.Workspace)/$(Build.Repository.LocalPath)'
         commit_changes: true
         pushchanges: true
         github_connection: 'abhivan-github'
@@ -42,7 +42,7 @@ jobs:
         package: employee
         isDiffCheck: true
         isGitTag: true
-        project_directory: '$(Pipeline.Workspace)'
+        project_directory: '$(Pipeline.Workspace)/$(Build.Repository.LocalPath)'
 
     - task: AzlamSalam.sfpowerscripts.sfpowerscripts-postcreatepackage-task.sfpowerscripts-postcreatepackage-task@1
       displayName: 'Post Execution for Create Package Tasks'
