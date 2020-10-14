@@ -31,7 +31,7 @@ jobs:
         clientid: $(jwt-client-id)
 
     - bash: |
-        if sfdx force:org:list | grep -w devhub $(Scratch_Org_Name); then
+        if sfdx force:org:list | grep -w $(Scratch_Org_Name); then
           echo "There is existing test org"
         else
           sfdx force:org:create -f config/project-scratch-def.json -a $(Scratch_Org_Name) -d 30 -v ${{parameters.username}}
