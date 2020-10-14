@@ -39,3 +39,8 @@ jobs:
         package: employee
         isDiffCheck: true
         isGitTag: true
+
+    - task: AzlamSalam.sfpowerscripts.sfpowerscripts-postcreatepackage-task.sfpowerscripts-postcreatepackage-task@1
+      displayName: 'Post Execution for Create Package Tasks'
+      inputs:
+        github_connection: 'abhivan-github'
