@@ -38,7 +38,7 @@ jobs:
         fi
       displayName: 'Create a Scratch Org'
 
-    - bash: 'sfdx force:source:push -u $(Scratch_Org_Name)'
+    - bash: 'sfdx force:source:push -u $(Scratch_Org_Name) -f'
       displayName: 'Push source to ScratchOrg'
 
     - task: AzlamSalam.sfpowerscripts.sfpwowerscript-triggerapextest-task.sfpwowerscript-triggerapextest-task@9
