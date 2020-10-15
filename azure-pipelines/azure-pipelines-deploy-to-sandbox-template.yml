@@ -16,7 +16,7 @@ steps:
       username: ${{parameters.username}}
       alias: ${{parameters.devhub_alias}}
       isdevhub: true
-      clientid: $(jwt-client-id-ns)
+      clientid: $(jwt-client-id)
 
   - bash: |
       # version_number=$(echo $(Build.SourceBranch) | cut -d "v" -f2)
