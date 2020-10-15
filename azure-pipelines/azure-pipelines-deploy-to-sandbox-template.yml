@@ -21,7 +21,8 @@ steps:
   - bash: |
       # version_number=$(echo $(Build.SourceBranch) | cut -d "v" -f2)
       version_number=$(echo $(Build.SourceBranch) | cut -d '/' -f3)
-      package_version_id=$(sfdx force:package:version:list --json | jq -r --arg VERSION_NUM "$version_number" '.result[] | select(.Version == $VERSION_NUM) | .SubscriberPackageVersionId' | sed -e 's/^"//' -e 's/"$//')
+      #package_version_id=$(sfdx force:package:version:list --json | jq -r --arg VERSION_NUM "$version_number" '.result[] | select(.Version == $VERSION_NUM) | .SubscriberPackageVersionId' | sed -e 's/^"//' -e 's/"$//')
+      package_version_id=$(sfdx force:package:version:list --json | jq -c -r --arg VERSION_NUM "$version_number" '[ .result[] | select( .Version | contains($VERSION_NUM)) ] | last | .SubscriberPackageVersionId' | sed -e 's/^"//' -e 's/"$//')
       if [[ -z "$package_version_id" ]]
       then 
         echo "Cannot find matching package version ID installed" && exit 1
