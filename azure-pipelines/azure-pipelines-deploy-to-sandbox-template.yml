@@ -9,7 +9,7 @@ steps:
     displayName: 'Install SFDX'
 
   - task: AzlamSalam.sfpowerscripts.sfpwowerscript-authenticateorg-task.sfpwowerscript-authenticateorg-task@9
-    displayName: 'Authenticate  devhub using JWT'
+    displayName: 'Authenticate devhub using JWT'
     inputs:
       method: JWT
       jwt_key_file: server.key
@@ -19,11 +19,21 @@ steps:
       clientid: $(jwt-client-id)
 
   - bash: |
+      echo "Setting default org"
+      sfdx force:config:set defaultusername=${{parameters.devhub_alias}}
+    displayName: 'Get package version ID using version number'
+
+  - bash: |
       # version_number=$(echo $(Build.SourceBranch) | cut -d "v" -f2)
       version_number=$(echo $(Build.SourceBranch) | cut -d "/" -f3)
       echo $version_number
+
+      sfdx force:package:version:list
+      
       #package_version_id=$(sfdx force:package:version:list --json | jq -r --arg VERSION_NUM "$version_number" '.result[] | select(.Version == $VERSION_NUM) | .SubscriberPackageVersionId' | sed -e 's/^"//' -e 's/"$//')
       package_version_id=$(sfdx force:package:version:list --json | jq -c -r --arg VERSION_NUM "$version_number" '[ .result[] | select( .Version | contains($VERSION_NUM)) ] | last | .SubscriberPackageVersionId' | sed -e 's/^"//' -e 's/"$//')
+      echo $package_version_id
+      
       if [[ -z "$package_version_id" ]]
       then 
         echo "Cannot find matching package version ID installed" && exit 1

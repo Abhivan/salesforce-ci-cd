@@ -38,6 +38,3 @@ stages:
             - download: none
             - checkout: self
             - template: azure-pipelines/azure-pipelines-deploy-to-sandbox-template.yml
-              parameters:
-                username: cicd@xploremachinez.com
-                devhub_alias: devhub

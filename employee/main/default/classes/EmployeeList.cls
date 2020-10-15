@@ -6,7 +6,7 @@ public static void emplyMethod(List<Employee__c> empList){
         employeeList.add(emp);
     }
     if(!employeeList.isEmpty()){
-      system.debug('Employee  List debugged..');
+      system.debug('Employee  List debugged.');
     }
 
 }
