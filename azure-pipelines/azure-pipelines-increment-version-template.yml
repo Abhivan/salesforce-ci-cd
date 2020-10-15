@@ -17,7 +17,7 @@ jobs:
     - bash: |
         tag_name=$(echo $(Build.SourceBranch) | cut -d '/' -f3)
         version_number=$(cat sfdx-project.json | jq ' .packageDirectories[].versionNumber ' | sed -e 's/^"//' -e 's/"$//' | cut -c1-5)
-        if [[ "$tag_name" == "$version_number" ]]; then echo "Tag and version number matches"; else exit 1; fi
+        if [[ "$tag_name" == "$version_number" ]]; then echo "Tag and version number matches"; else echo "Tag and version dont match" && exit 1; fi
       displayName: 'Check if tag version matches with sfdx-project.json'
 
     - task: AzlamSalam.sfpowerscripts.sfpwowerscript-installsfdx-task.sfpwowerscript-installsfdx-task@7
@@ -47,10 +47,10 @@ jobs:
         project_directory: '$(Build.Repository.LocalPath)'
         devhub_alias: '${{parameters.devhub_alias}}'
         isDiffCheck: true
-        isGitTag: true
+        # isGitTag: true
         set_build_number: true
 
-    - task: AzlamSalam.sfpowerscripts.sfpowerscripts-postcreatepackage-task.sfpowerscripts-postcreatepackage-task@1
-      displayName: 'Post Execution for Create Package Tasks'
-      inputs:
-        github_connection: 'abhivan-github'
+    # - task: AzlamSalam.sfpowerscripts.sfpowerscripts-postcreatepackage-task.sfpowerscripts-postcreatepackage-task@1
+    #   displayName: 'Post Execution for Create Package Tasks'
+    #   inputs:
+    #     github_connection: 'abhivan-github'

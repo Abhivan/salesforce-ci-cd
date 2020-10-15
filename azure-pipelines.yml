@@ -23,7 +23,7 @@ stages:
     displayName: 'Release to Staging'
     dependsOn: Increment_version
     pool: sfpool
-    condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'refs/tags/employee'))
+    condition: and(succeeded(), contains(variables['Build.SourceBranch'], 'refs/tags/'))
     jobs:
     - deployment: deploy_to_staging
       environment: 'staging'
