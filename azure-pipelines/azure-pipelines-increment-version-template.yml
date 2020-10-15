@@ -14,6 +14,12 @@ jobs:
     clean: all
   steps:
 
+    - bash: |
+        tag_name=$(echo $(Build.SourceBranch) | cut -d '/' -f3)
+        version_number=$(cat sfdx-project.json | jq ' .packageDirectories[].versionNumber ' | sed -e 's/^"//' -e 's/"$//' | cut -c1-5)
+        if [[ "$tag_name" == "$version_number" ]]; then echo "Tag and version number matches"; else exit 1; fi
+      displayName: 'Check if tag version matches with sfdx-project.json'
+
     - task: AzlamSalam.sfpowerscripts.sfpwowerscript-installsfdx-task.sfpwowerscript-installsfdx-task@7
       displayName: 'Install SFDX'
 
@@ -33,7 +39,6 @@ jobs:
         appendBuildNumber: true
         package: employee
         project_directory: '$(Build.Repository.LocalPath)'
-
 
     - task: AzlamSalam.sfpowerscripts.sfpwowerscripts-createunlockedpackage-task.sfpwowerscripts-createunlockedpackage-task@12
       displayName: 'Creates a new version of employee'

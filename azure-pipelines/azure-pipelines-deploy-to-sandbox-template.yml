@@ -1,0 +1,39 @@
+parameters:
+  username: cicd@xploremachinez.com
+  poolname: sfpool
+  devhub_alias: devhub
+
+steps:
+
+  - task: AzlamSalam.sfpowerscripts.sfpwowerscript-installsfdx-task.sfpwowerscript-installsfdx-task@7
+    displayName: 'Install SFDX'
+
+  - task: AzlamSalam.sfpowerscripts.sfpwowerscript-authenticateorg-task.sfpwowerscript-authenticateorg-task@9
+    displayName: 'Authenticate  devhub using JWT'
+    inputs:
+      method: JWT
+      jwt_key_file: server.key
+      username: ${{parameters.username}}
+      alias: ${{parameters.devhub_alias}}
+      isdevhub: true
+      clientid: $(jwt-client-id-ns)
+
+  - bash: |
+      version_number=$(echo $(Build.SourceBranch) | cut -d "v" -f2)
+      package_version_id=$(sfdx force:package:version:list --json | jq -r --arg VERSION_NUM "$version_number" '.result[] | select(.Version == $VERSION_NUM) | .SubscriberPackageVersionId' | sed -e 's/^"//' -e 's/"$//')
+      if [[ -z "$package_version_id" ]]
+      then 
+        echo "Cannot find matching package version ID installed" && exit 1
+      else 
+        echo "##vso[task.setvariable variable=package_version_id]$package_version_id"
+      fi
+    displayName: 'Get package version ID using version number'
+
+  - task: AzlamSalam.sfpowerscripts.sfpwowerscript-installunlockedpackage-task.sfpwowerscript-installunlockedpackage-task@11
+    displayName: 'Install a version of employee to ${{parameters.devhub_alias}}'
+    inputs:
+      envname: '${{parameters.devhub_alias}}'
+      package: employee
+      packageinstalledfrom: Custom
+      package_version_id: '$($package_version_id)'
+      skip_if_package_installed: true
