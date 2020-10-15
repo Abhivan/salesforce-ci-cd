@@ -21,7 +21,7 @@ stages:
 
   - stage: Release_to_Staging
     displayName: 'Release to Staging'
-    dependsOn: Test
+    dependsOn: Increment_version
     pool: sfpool
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/tags/employee*'))
     jobs:
