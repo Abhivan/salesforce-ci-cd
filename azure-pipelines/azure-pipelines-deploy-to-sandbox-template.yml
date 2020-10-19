@@ -20,7 +20,7 @@ steps:
 
   - bash: |
       sfdx config:set defaultdevhubusername=${{parameters.devhub_alias}}
-      
+
       # version_number=$(echo $(Build.SourceBranch) | cut -d "v" -f2)
       version_number=$(echo $(Build.SourceBranch) | cut -d "/" -f3)
       echo $version_number
@@ -45,5 +45,5 @@ steps:
       envname: '${{parameters.devhub_alias}}'
       package: employee
       packageinstalledfrom: Custom
-      package_version_id: '$($package_version_id)'
+      package_version_id: '$(package_version_id)'
       skip_if_package_installed: true
