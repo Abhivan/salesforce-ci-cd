@@ -19,11 +19,8 @@ steps:
       clientid: $(jwt-client-id)
 
   - bash: |
-      echo "Setting default org"
-      sfdx force:config:set defaultusername=${{parameters.devhub_alias}}
-    displayName: 'Get package version ID using version number'
-
-  - bash: |
+      sfdx config:set defaultdevhubusername=${{parameters.devhub_alias}}
+      
       # version_number=$(echo $(Build.SourceBranch) | cut -d "v" -f2)
       version_number=$(echo $(Build.SourceBranch) | cut -d "/" -f3)
       echo $version_number
